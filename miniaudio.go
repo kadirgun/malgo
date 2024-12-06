@@ -32,3 +32,18 @@ func SampleSizeInBytes(format FormatType) int {
 const (
 	rawDeviceInfoSize = C.sizeof_ma_device_info
 )
+
+func boolToChar(value bool) C.uchar {
+	if value {
+		return C.uchar(1)
+	}
+	return C.uchar(0)
+}
+
+func charToBool(value C.uchar) bool {
+	return value != 0
+}
+
+func uintToBool(value uint32) bool {
+	return value != 0
+}

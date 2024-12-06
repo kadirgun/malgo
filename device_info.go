@@ -33,7 +33,7 @@ func (d *DeviceID) cptr() *C.ma_device_id {
 type DeviceInfo struct {
 	ID          DeviceID
 	name        [256]byte
-	IsDefault   uint32
+	IsDefault   bool
 	FormatCount uint32
 	Formats     []DataFormat
 }
@@ -59,7 +59,7 @@ func deviceInfoFromPointer(ptr unsafe.Pointer) DeviceInfo {
 	for i := 0; i < len(device.name); i++ {
 		newDevice.name[i] = (byte)(device.name[i])
 	}
-	newDevice.IsDefault = uint32(device.isDefault)
+	newDevice.IsDefault = uintToBool(uint32(device.isDefault))
 	newDevice.FormatCount = uint32(device.nativeDataFormatCount)
 	newDevice.Formats = make([]DataFormat, newDevice.FormatCount)
 	for i := 0; i < int(newDevice.FormatCount); i++ {

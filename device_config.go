@@ -67,10 +67,12 @@ func DefaultDeviceConfig(deviceType DeviceType) DeviceConfig {
 	deviceConfig.Capture.ChannelMap = unsafe.Pointer(config.capture.pChannelMap)
 	deviceConfig.Capture.ShareMode = ShareMode(config.capture.shareMode)
 
-	deviceConfig.Wasapi.NoAutoConvertSRC = uint32(config.wasapi.noAutoConvertSRC)
-	deviceConfig.Wasapi.NoDefaultQualitySRC = uint32(config.wasapi.noDefaultQualitySRC)
-	deviceConfig.Wasapi.NoAutoStreamRouting = uint32(config.wasapi.noAutoStreamRouting)
-	deviceConfig.Wasapi.NoHardwareOffloading = uint32(config.wasapi.noHardwareOffloading)
+	deviceConfig.Wasapi.NoAutoConvertSRC = charToBool(config.wasapi.noAutoConvertSRC)
+	deviceConfig.Wasapi.NoDefaultQualitySRC = charToBool(config.wasapi.noDefaultQualitySRC)
+	deviceConfig.Wasapi.NoAutoStreamRouting = charToBool(config.wasapi.noAutoStreamRouting)
+	deviceConfig.Wasapi.NoHardwareOffloading = charToBool(config.wasapi.noHardwareOffloading)
+	deviceConfig.Wasapi.LoopbackProcessID = uint32(config.wasapi.loopbackProcessID)
+	deviceConfig.Wasapi.LoopbackProcessExclude = charToBool(config.wasapi.loopbackProcessExclude)
 
 	deviceConfig.Alsa.NoMMap = uint32(config.alsa.noMMap)
 	deviceConfig.Alsa.NoAutoFormat = uint32(config.alsa.noAutoFormat)
@@ -120,10 +122,12 @@ func (d *DeviceConfig) toC() (C.ma_device_config, func()) {
 	deviceConfig.capture.pChannelMap = (*C.ma_channel)(d.Capture.ChannelMap)
 	deviceConfig.capture.shareMode = C.ma_share_mode(d.Capture.ShareMode)
 
-	deviceConfig.wasapi.noAutoConvertSRC = C.uchar(d.Wasapi.NoAutoConvertSRC)
-	deviceConfig.wasapi.noDefaultQualitySRC = C.uchar(d.Wasapi.NoDefaultQualitySRC)
-	deviceConfig.wasapi.noAutoStreamRouting = C.uchar(d.Wasapi.NoAutoStreamRouting)
-	deviceConfig.wasapi.noHardwareOffloading = C.uchar(d.Wasapi.NoHardwareOffloading)
+	deviceConfig.wasapi.noAutoConvertSRC = boolToChar(d.Wasapi.NoAutoConvertSRC)
+	deviceConfig.wasapi.noDefaultQualitySRC = boolToChar(d.Wasapi.NoDefaultQualitySRC)
+	deviceConfig.wasapi.noAutoStreamRouting = boolToChar(d.Wasapi.NoAutoStreamRouting)
+	deviceConfig.wasapi.noHardwareOffloading = boolToChar(d.Wasapi.NoHardwareOffloading)
+	deviceConfig.wasapi.loopbackProcessID = C.uint(d.Wasapi.LoopbackProcessID)
+	deviceConfig.wasapi.loopbackProcessExclude = boolToChar(d.Wasapi.LoopbackProcessExclude)
 
 	deviceConfig.alsa.noMMap = C.uint(d.Alsa.NoMMap)
 	deviceConfig.alsa.noAutoFormat = C.uint(d.Alsa.NoAutoFormat)
@@ -166,10 +170,12 @@ type SubConfig struct {
 
 // WasapiDeviceConfig type.
 type WasapiDeviceConfig struct {
-	NoAutoConvertSRC     uint32
-	NoDefaultQualitySRC  uint32
-	NoAutoStreamRouting  uint32
-	NoHardwareOffloading uint32
+	NoAutoConvertSRC       bool
+	NoDefaultQualitySRC    bool
+	NoAutoStreamRouting    bool
+	NoHardwareOffloading   bool
+	LoopbackProcessID      uint32
+	LoopbackProcessExclude bool
 }
 
 // AlsaDeviceConfig type.
